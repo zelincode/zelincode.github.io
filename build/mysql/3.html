@@ -1,0 +1,105 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta http-equiv="X-UA-Compatible" content="ie=edge"><title>MySQL进阶 - Zelincode</title><meta name="description" content="模糊查询"><meta name="keywords" content="MySQL进阶 - Zelincode"><script src="/static/js/jquery-3.3.1.min.js"></script><script src="/static/js/vue.min.js"></script><link rel="stylesheet" href="/static/css/normalize.min.css"><link rel="stylesheet" href="/static/css/monaco.css"><link rel="stylesheet" href="/static/css/loading.css"><link rel="stylesheet" href="/static/css/editormd.min.css"><link rel="stylesheet" href="/static/css/style.css"><link rel="stylesheet" href="/static/css/mobile.css"><link rel="stylesheet" href="/static/font-awesome-4.7.0/css/font-awesome.min.css"><link rel="stylesheet" href="/static/css/highlight.default.min.css"><script src="/static/js/highlight.min.js"></script><script>window._CONST={ROOT_PATH:"/"},hljs.initHighlightingOnLoad()</script></head><body><div class="main"><div class="tea-menu"><div class="tea-menu-title"><i class="fa fa-home" aria-hidden="true"></i> <span>Zelincode</span></div><div class="tea-menu-search-warp"><i class="fa fa-search"></i> <input type="text" placeholder="搜索文档" value height="100%"></div><ul class="tea-menu-list"><li><a href="/index.html" title="介绍" class>介绍</a></li><li><a title="Java" class>Java<i class="fa fa-angle-down unfold"></i></a><ul class="unfold"><li><a href="/java/java01.html" title="Java环境配置" class>Java环境配置</a></li><li><a href="/java/java02.html" title="Java基础语法" class>Java基础语法</a></li><li><a href="/java/java03.html" title="Java基础" class>Java基础</a></li></ul></li><li><a title="MySQL" class="active">MySQL<i class="fa fa-angle-down unfold"></i></a><ul class="unfold"><li><a href="/mysql/1.html" title="MySQL安装概述" class>MySQL安装概述</a></li><li><a href="/mysql/2.html" title="MySQL基础" class>MySQL基础</a></li><li><a href="/mysql/3.html" title="MySQL进阶" class="active">MySQL进阶</a></li></ul></li><li><a title="Python">Python<i class="fa fa-angle-down unfold"></i></a><ul class="unfold"><li><a href="/python/p0.html" title="Python入门">Python入门</a></li><li><a href="/python/p1.html" title="Python基础">Python基础</a></li><li><a href="/python/p2.html" title="python进阶">python进阶</a></li><li><a href="/python/p3.html" title="python算法">python算法</a></li><li><a title="Python爬虫">Python爬虫<i class="fa fa-angle-down unfold"></i></a><ul class="unfold"><li><a href="/python/p3.html" title="python爬虫基础">python爬虫基础</a></li><li><a href="/python/p5.html" title="python爬虫进阶">python爬虫进阶</a></li><li><a href="/python/p6.html" title="python反爬虫">python反爬虫</a></li></ul></li><li><a title="Scrapy">Scrapy<i class="fa fa-angle-down unfold"></i></a><ul class="unfold"><li><a href="/python/css.html" title="css选择器">css选择器</a></li></ul></li></ul></li><li><a title="大数据">大数据<i class="fa fa-angle-down unfold"></i></a><ul class="unfold"><li><a href="/Hadoop01.html" title="Hadoop">Hadoop</a></li></ul></li><li><a title="Linux">Linux<i class="fa fa-angle-down unfold"></i></a><ul class="unfold"><li><a href="/linux01.html" title="Linux基础">Linux基础</a></li></ul></li><li><a title="PHP">PHP<i class="fa fa-angle-down unfold"></i></a><ul class="unfold"><li><a href="/PHP01.html" title="php基础">php基础</a></li></ul></li><li><a title="其它">其它<i class="fa fa-angle-down unfold"></i></a><ul class="unfold"><li><a href="/config/structure.html" title="文档目录结构介绍">文档目录结构介绍</a></li><li><a href="/config/main.html" title="主配置文件说明">主配置文件说明</a></li><li><a href="/config/nav.html" title="菜单配置文件说明">菜单配置文件说明</a></li></ul></li></ul><div class="tea-version"><p>version: 0.0.1</p><p>Built with <a href="https://github.com/lisniuse/teadocs" target="_blank">Teadocs</a></p></div></div><div class="tea-content"><div class="tea-nav"><h3 class="top-title" style="font-weight:500;margin:0;font-size:16px"><i class="fa fa-navicon" aria-hidden="true"></i> <span>MySQL进阶</span></h3></div><div class="tea-container"><article class="markdown-body"><pre class="prettyprint language-mysql"><code>use nh; /*使用特定的数据库*/
+
+select * from jobs; /*查询表中所有信息*/
+
+show tables; /*显示所有的表*/
+
+create table jobs(id int,name varchar(32));/*创建一个新的表*/
+    /*创建表时设置主键*/
+    create table jobs(id int,name varchar(32),primary key(id));  /*主键 不能为空  唯一*/
+    /*创建表时设置序列递增*/
+    create table jobs(id int primary key auto_increment,name varchar(32)); 
+insert into jobs(id,name) values(1,"jack"); /*向表中插入信息*/
+update jobs set name="ROSE" where id = 1; /*修改表的内容*/
+desc jobs;/*查看表的信息*/
+
+drop table jobs;/*删除表*/
+delete from jobs where id=2;
+
+</code></pre><p>模糊查询</p><p>排序</p><p>where字句中不能使用别名，也不能使用组函数</p><pre class="prettyprint language-mysql"><code>/*1. 查询工资最低的员工信息: last_name, salary*/
+select last_name,salary from employees where salary =(select min(salary) from employees);
+
+/*2. 查询平均工资最低的部门信息*/
+select * from departments 
+where department_id = (select department_id from employees group by department_id  order by avg(salary) limit 1);
+
+/*3. 查询平均工资最低的部门信息和该部门的平均工资*/
+select * ,(select avg(salary) from employees where department_id = departments.department_id) from departments 
+where department_id = (select department_id from employees group by department_id  order by avg(salary) limit 1);
+
+/*4. 查询平均工资最高的 job 信息*/
+select * from jobs
+where job_id =(
+    select job_id from employees
+    group by job_id
+    order by avg(salary) limit 1
+);
+
+/*5. 查询平均工资高于公司平均工资的部门有哪些?*/
+select department_name from departments
+where department_id in(
+    select department_id from employees
+    group by department_id
+    having avg(salary)&gt;(select avg(salary) from employees)
+);
+
+/*6. 查询出公司中所有 manager 的详细信息.*/
+select * from employees
+where employee_id in(select manager_id from employees);
+
+/*7. 各个部门中 最高工资中最低的那个部门的 最低工资是多少*/
+select min(salary) from employees
+where department_id = 
+    (select department_id from employees
+    group by department_id 
+    order by max(salary) limit 1);
+
+
+/*8. 查询平均工资最高的部门的 manager 的详细信息: last_name, department_id, email, salary*/
+select last_name,department_id,email,salary from employees
+where employee_id in (select manager_id from employees
+    where department_id =
+        (select department_id from employees
+        group by department_id
+        order by avg(salary)desc limit 1)
+);</code></pre><p>mysql数据库<br>字段类型<br>在mysql中包含的数据类型很多，这里主要列出来常用的几种<br>数字：int（整数）,decimal（浮点数）<br>字符串：char（不可改变字符数）,varchar（有限长度，可变字符 数）,text（大文本）<br>日期：datetime<br>布尔：bit<br>编码问题： gb2312 UTF-8</p><p>约束<br>主键primary key(only 1)<br>非空not null<br>惟一unique<br>默认default<br>外键foreign key<br>查看版本：select version();<br>显示当前时间：select now();<br>注意：在语句结尾要使用分号;<br>远程连接<br>一般在公司开发中，可能会将数据库统一搭建在一台服务器上，所有开发人员共用一个数据库，而不是在自己的电脑中配置一个数据库<br>运行命令<br>mysql -hip地址 -uroot -p<br>-h后面写要连接的主机ip地址<br>-u后面写连接的用户名<br>-p回车后写密码<br>数据库操作<br>查看当前所有数据库<br>show databases;<br>创建数据库<br>create database 数据库名 charset=utf8;<br>删除数据库<br>drop database 数据库名;<br>切换数据库<br>use 数据库名;<br>查看当前选择的数据库<br>select database();<br>表操作<br>查看当前数据库中所有表<br>show tables;<br>创建表<br>auto_increment表示自动增长<br>create table 表名(列及类型);<br>如：<br>create table students(<br>id int auto_increment primary key,<br>sname varchar(10) not null<br>);<br>create table 表名(键 类型 自增 主键 非空)<br>create table students(<br>id int auto_increment primary key not null, #主键形式一致<br>name varchar(10) not null,<br>birthiday datetime,<br>gender bit default 1,<br>isDelet bit default 0<br>);</p><p>修改表<br>alter table 表名 add|change|drop 列名 类型;<br>如：<br>alter table students add birthday datetime;<br>删除表<br>drop table 表名;<br>查看表结构<br>desc 表名;<br>更改表名称<br>rename table 原表名 to 新表名;<br>查看表的创建语句<br>show create table '表名';<br>数据操作<br>查询<br>select * from 表名；<br>增加<br>全列插入：insert into 表名 values(...)<br>缺省插入：insert into 表名(列1,...) values(值1,...)<br>同时插入多条数据：insert into 表名 values(...),(...)...;<br>或insert into 表名(列1,...) values(值1,...),(值1,...)...;<br>主键列是自动增长，但是在全列插入时需要占位，通常使用0，插入成功后以实际数据为准<br>修改<br>update 表名 set 列1=值1,... where 条件<br>删除<br>delete from 表名 where 条件<br>逻辑删除，本质就是修改操作update<br>alter table students add isdelete bit default 0;</p><hr><h2 id="python连接数据库"><a href="#python连接数据库" class="header-anchor">#</a> <span>python连接数据库</span></h2><pre class="prettyprint language-python"><code>import pymysql # 连接需要的包
+db = pymysql.connect("localhost","root","77778888","scrapy" ) #连接数据库
+cursor = db.cursor() #建立指针
+sql = """CREATE TABLE Log (
+         device_id  VARCHAR(50) NOT NULL,
+         os  VARCHAR(10) NOT NULL,
+         os_version VARCHAR(10) NOT NULL,  
+         start_time VARCHAR(30) NOT NULL,
+         end_time VARCHAR(30) NOT NULL,
+         duration int )"""
+
+cursor.execute(sql)#执行sql语句
+
+#通过行来读取
+with open("file","r")as f:
+    while 1:
+        line = f.readline()
+        if not line:
+            break
+        line = line.strip("\n")
+        # 下面接方法
+
+#写入数据
+#同样通过编写sql语句执行
+#sql语句实例
+sql = "insert into log(device_id,os,os_version,start_time,end_time,duration)values('%s', '%s','%s', '%s','%s',%d)"%(tags[0],tags[1],tags[2],tags[3],tags[4],int(tags[5]))
+
+#关闭数据库
+db.close()
+</code></pre><p>对于字符串values要写成'%S',不然sql语句不符合语法</p><pre class="prettyprint language-python"><code>#获取异常
+import traceback
+try:
+
+　　...
+
+except Exception, e:
+    print(str(e))
+　　...</code></pre></article></div></div><i class="fa fa-arrow-circle-up gotop" aria-hidden="true"></i><div id="menu-mask"></div></div><script src="/static/js/main.js"></script><script src="/static/js/mobile.js"></script>
+<script src="/__webscoket__/socket.io.js"></script>
+<script src="/__webscoket__/socket.client.js"></script>
+</body></html>
